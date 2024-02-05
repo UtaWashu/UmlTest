@@ -1,0 +1,51 @@
+@startuml
+
+package "Система учета товаров супермаркета" {
+rectangle "Склад" as awesome {
+ database "Инф система" as db
+ 
+ rectangle "Прием товара" as receiving {
+   usecase "Подготовка заказа" as prepare_order
+    usecase "Прием товара" as receive_goods
+    usecase "Аудит товара" as audit_goods
+    usecase "Выдача товара" as issue_goods
+    
+    prepare_order --> receive_goods
+    receive_goods --> audit_goods
+    audit_goods --> issue_goods
+  }
+  
+   db --> receiving
+}
+
+rectangle "Торговое помещение" as stor {
+ database "Инф система" as db
+  
+   rectangle "Прием товара на реализациию"  as receive_goods_on_sale {
+    usecase "Прием товара со склада" as receive_from_warehouse
+    usecase "Учет месторасположения товара" as track_location
+    usecase "Аудит работы сотрудников" as audit_employees
+    
+    receive_from_warehouse --> track_location
+    track_location --> audit_employees
+  }
+  
+  db --> receive_goods_on_sale
+}
+
+rectangle "Кассовый аппарт" as cash_register {
+ usecase "Продажа" as sale
+ usecase "Оформление покупки" as process_purchase
+ usecase "Касса" as register
+ 
+ sale --> process_purchase
+ process_purchase --> register
+}
+
+receiving --> receive_from_warehouse
+cash_register --> sale
+issue_goods --> sale
+
+}
+
+@enduml
